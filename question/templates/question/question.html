@@ -1,0 +1,141 @@
+{%extends 'base.html'%}
+{%block title%}Question {{question.qno}}{%endblock%}
+{% block styles %}
+<style type="text/css" media="screen">
+    #temp_text_area { 
+    width: 100%;
+    height: 500px;
+    }
+</style>
+<script>
+function check(pk){
+$.ajax({url: '/question/attempt/' + pk;,
+    success: function(result){
+        if(result.indexOf('Checking...') != -1){
+            setTimeout(check(pk), 500);
+        }
+        else
+        {
+            document.location.reload();
+        }
+    }});
+            }
+</script>
+{% endblock %}
+
+{%block body%}
+    <div class='container text-left'>
+        {% if questions %}{# if it is a list of questions #}
+            <div class='row'>
+                <h3 class='text-primary'>Questions</h3>
+                <b>Questions in green are practice questions and carry no marks.</b>
+            </div>
+
+            <ol class='col-md-5'>
+                {% for ques in questions %}
+                    <li class='bg-{% if ques.practice %}success
+                                  {% else %}danger
+                                  {% endif %}'>
+                    <a href={{ ques.get_absolute_url }}>{{ques.title}}</a></li>
+                {% endfor %}
+            </ol>
+        {% elif question %}{# if it is an individual question #}
+        {% if last_correct %}{# correct answer recieved #}
+            <div class="alert alert-success alert-dismissible" role="alert">
+                Correct Answer. Further attempts on this question will be ignored.
+                {% else %}{# something went wrong #}
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                If you are seeing this one of the following is true:
+                <ul>
+                    <li>This is your first time on this question. If so <strong>ignore this message</strong></li>
+                    <li>Your last attempt was wrong(See Attempt History Tab)</li>
+                    <li>Your last attempt had errors(See Attempt History Tab)</li>
+                </ul>
+        {% endif %}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {# TABS for QUESTION #}
+            <ul class="nav nav-tabs">
+                <li role="presentation" class="active"><a data-toggle="tab" href="#question_attempt">Question</a></li>
+                <li role="presentation"><a data-toggle="tab" href="#attempt_form">Code Editor</a></li>
+                <li role="presentation"><a data-toggle="tab" href="#attempt_history">Attempt History</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane fade in active" id="question_attempt">
+                    <p class='lead'>{{question.qno}}: {{question.title}}</p>
+                    <p class='bg-warning'>Marks on page load: {{marks}}</p>
+                    <pre>{{question.text}}</pre>
+                    <hr>
+                </div>
+                {% if answer_form %}
+                <div class='tab-pane fade' id='attempt_form'>
+                    <form role='form' action={%url "question:question" question.qno %} method='post'>
+                        {%csrf_token%}
+                        {%load bootstrap%}
+                        {{answer_form}}
+                        <div class='well'>
+                            <div id="temp_text_area">
+                            </div>
+                        </div>
+                        <input type='submit' class='btn btn-success' value='Submit'></input>
+                    </form>
+                </div>
+                {% endif %}
+                <div class="tab-pane fade" id="attempt_history">
+                    <div class='table-responsive'>
+                        <table class='table table-hover'>
+                            <thead><tr>
+                                <th>Attempt Details</th>
+                                <th>Time-Stamp</th>
+                                <th>Marks</th>
+                                <th>Remarks</th>
+                            </tr></thead>
+                            <tbody>
+                                {%for a in attempts%}
+                                    <tr>
+                                        <td><a href={{a.get_absolute_url}}> See attempt no {{a.pk}}</a></td>
+                                        <td>{{a.stamp}}</td>
+                                        <td>{{a.marks}}</td>
+                                        <td><pre>{{a.remarks}}</pre></td>
+                                    </tr>
+                                {%endfor%}
+                            </tbody>
+                        </table>
+                </div>
+        </div>
+        {% endif %}
+    </div>
+    {% load static %}
+    <script src="{% static 'ace/ace.js' %}" type="text/javascript" charset="utf-8"></script>
+    <script src="{% static 'ace/ext-modelist.js' %}" type="text/javascript" charset="utf-8"></script>
+    <script>
+        var editor = ace.edit("temp_text_area");
+        var textarea = $('textarea[id="id_source"]');
+        var label = $('label[for="id_source"]').hide(); textarea.hide();
+
+        editor.getSession().setValue(textarea.val());
+        editor.getSession().on('change', function(){
+      textarea.val(editor.getSession().getValue());
+        });
+        editor.setTheme("ace/theme/monokai");
+
+        var source_name = $('input[id="id_source_name"]');
+        function new_mode() {
+            var source_name = $('input[id="id_source_name"]');
+            var filePath = source_name.val();
+            var modelist = ace.require("ace/ext/modelist");
+            var mode = modelist.getModeForPath(filePath).mode
+            editor.session.setMode(mode)
+        }
+        new_mode()
+        source_name.change(new_mode)
+        editor.setFontSize(18);
+    </script>
+    {% for a in attempts %}
+        {% if a.remarks == 'Checking...' %}
+        <script> check({{a.pk}}); </script>
+        {% endif %}
+    {% endfor %}
+{%endblock%}

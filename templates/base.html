@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+    <!-- Meta, title, CSS, favicons, etc. -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>-openjudge-{%block title%}{%endblock%}</title>
+    <!-- Stylesheets -->
+    {%load static%}
+    {%load bootstrap%}
+    <!-- Latest compiled and minified CSS  -->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    -->
+    <link rel="stylesheet" href='{% static "/bootstrap.min.css" %}'>
+    <link rel="stylesheet" href={% static '/bootstrap-theme.min.css' %}>
+    <script src={% static '/jquery.min.js' %}></script>
+    <script src={% static '/bootstrap.min.js' %}></script>
+    {% block styles %}
+    {% endblock %}
+    </head>
+
+
+    <body>
+        <nav class='navbar navbar-default' role='navigation'>
+        <div class='navbar-header'>
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        </div><!--navbar-header-->
+        <div class='collapse navbar-collapse' id='navbar-collapse-1'>
+            <ul class='nav navbar-nav'>
+                <li><a href={% url 'home' %}>Home</a></li>
+                <li><a href={% url 'question:home' %}>Questions</a></li>
+                <li><a href={% url 'register' %}>Register</a></li>
+                <li><a href={% url 'question:leaderboard'%}>Leaderboard</a></li>
+                {% if request.user.is_authenticated %}
+                <li><a> {{user.profile}} - {{user.profile.score}}</a> </li>
+                <li><a href={% url 'logout' %}>Logout</a>
+                {% else %}
+                <li><a> Unregistered User</a></li>
+                <li> <a href={% url "login"%}>Login</a>
+                {% endif %}
+            </ul>
+            <ul class='nav navbar-right'>
+                <li> {% if contest_on %}
+                    <a class='text-success'>Contest Online
+                     {%else%}
+                    <a class='text-danger'>Contest OffLine
+                     {%endif%}
+                     {{contest_time | timeuntil}} Left<br>
+                     <b id='time'>{% now "jS F Y H:i"%}</b>&nbsp;</a>
+                </li>
+            </ul>
+        </div><!-- Navbar collapse-->
+        </nav>
+    <div class='container text-left'>
+    </div><!-- container text-left-->
+    <div class='container'>
+    {%block body%}
+    {%endblock%}
+    </div>
+    <script type='text/Javascript'>
+    refreshrate = 60000;
+    function Clock() {
+        time = document.getElementById('time');
+        parts = time.innerHTML.split(' ');
+        day = parts[0];
+        month = parts[1];
+        year = parts[2];
+        clock = parts[3].split(':');
+        hours = eval(clock[0]);
+        minutes = eval(clock[1]);
+        minutes += 1;
+        if (minutes > 59){
+            hours += 1;
+            minutes = 0;
+            if (hours > 23){
+                hours = 0;
+            }
+        }
+        clock = hours + ':' + minutes;
+        time.innerHTML = day + ' ' + month + ' ' + year + ' ' +clock;
+        setTimeout("Clock();", refreshrate);
+    }
+    setTimeout("Clock();", refreshrate);
+    </script>
+    </body>
+
+</html>

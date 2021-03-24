@@ -1,0 +1,33 @@
+{%extends 'base.html'%}
+{%block title%}LeaderBoard{%endblock%}
+
+{%block body%}
+<div class='table-responsive'>
+    <table class='table table-hover table-striped'>
+        <thead><tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>Score</th>
+            <th>LastSolve</th>
+        </tr></thead>
+        <tbody>
+            {%for p in players%}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{p}}</td>
+                    <td>{{p.score}}</td>
+                    <td>{{p.last_solved|timesince}}</td>
+                </tr>
+            {%endfor%}
+        </tbody>
+    </table>
+</div>
+<script type="text/JavaScript">
+<!--
+function timedRefresh(timeoutPeriod) {
+    setTimeout("location.reload(true);",timeoutPeriod);
+}
+timedRefresh(10000);
+//   -->
+</script>
+{%endblock%}
