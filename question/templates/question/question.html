@@ -66,7 +66,7 @@ $.ajax({url: '/question/attempt/' + pk;,
                 <div class="tab-pane fade in active" id="question_attempt">
                     <p class='lead'>{{question.qno}}: {{question.title}}</p>
                     <p class='bg-warning'>Marks on page load: {{marks}}</p>
-                    <pre>{{question.text}}</pre>
+                    <pre>{{question.text | safe}}</pre>
                     <hr>
                 </div>
                 {% if answer_form %}

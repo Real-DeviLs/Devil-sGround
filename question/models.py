@@ -9,6 +9,7 @@ from socket import create_connection
 from contest.models import Slave
 from json import loads, dumps
 from queue import Queue
+from tinymce.models import HTMLField 
 
 
 result_Q = Queue()
@@ -182,8 +183,9 @@ class Question(models.Model):
     """A question in the competition"""
     qno = models.IntegerField()
     title = models.CharField(max_length=50)
-    text = models.TextField(default='Question text goes here')
+    text = HTMLField()
     practice = models.BooleanField(default=False)
+    score   = models.IntegerField()
     # -----------
 
     def __str__(self):
@@ -211,13 +213,15 @@ class Question(models.Model):
         if self.practice:
             return 0
         total_attempts = Attempt.objects.filter(
-            question=self).exclude(correct=None).count()
-        if total_attempts == 0:
-            score = 1.0
+            question=self).exclude(correct=True).count()
+        if total_attempts >= 0:
+            score = self.score
         else:
-            wrong_attempts = Attempt.objects.filter(
-                question=self, correct=False).count()
-            score = float(wrong_attempts) / float(total_attempts)
+            score =0    
+        # else:
+        #     wrong_attempts = Attempt.objects.filter(
+        #         question=self, correct=False).count()
+        #     score = (float(wrong_attempts) / float(total_attempts))*float(self.score)
         return score
 
 class AnswerType(models.Model):

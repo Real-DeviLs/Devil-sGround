@@ -6,7 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    <title>-openjudge-{%block title%}{%endblock%}</title>
+    <title>-Devil's PlayGround-{%block title%}{%endblock%}</title>
     <!-- Stylesheets -->
     {%load static%}
     {%load bootstrap%}
@@ -61,6 +61,13 @@
             </ul>
         </div><!-- Navbar collapse-->
         </nav>
+        {% if messages %}
+<ul class="messages" style="border: 5px; background-color: chartreuse;">
+    {% for message in messages %}
+    <li style="font-size: 20px;" {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
     <div class='container text-left'>
     </div><!-- container text-left-->
     <div class='container'>

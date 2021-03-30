@@ -26,7 +26,7 @@ SECRET_KEY = 'rn0f6a(ky&o&hvuv@y&afieu_70k+^80unhz!1o&gf_*t=&2rq'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -42,9 +42,11 @@ INSTALLED_APPS = (
     'question',
     'contest',
     'gunicorn',
-    'bootstrap4'
+    'tinymce',
+    'crispy_forms',
+    # 'bootstrap4'
 )
-
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -122,6 +124,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
     
 ]
+# STATIC_ROOT = BASE_DIR / 'static'
 
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/login/'
@@ -136,4 +139,9 @@ SLAVE_ADDRESSES = (('127.0.0.1', 9000),
                    ('127.0.0.1', 9007),
                    ('127.0.0.1', 9008),
                    ('127.0.0.1', 9009),
-                   ('127.0.0.1', 9010),)
+                   ('127.0.0.1', 9010),
+                   ('127.0.0.1', 9011),
+                   ('127.0.0.1', 9012),
+                   ('127.0.0.1', 9013),
+                   ('127.0.0.1', 9014),
+                   )

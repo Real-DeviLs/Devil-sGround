@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load crispy_forms_tags %}
 {% block head %}
     {% load bootstrap %}
     {% load static %}
@@ -16,7 +16,7 @@
     <form role='form' method="post" action="" class='form text-center'>
         {% csrf_token %}
         <h2 class="form-heading">Please Login</h2>
-        {{ form  }}
+        {{ form | crispy  }}
         <button class="btn btn-lg btn-success btn-block" type="submit">Login</button>
         <input type="hidden" name="next" value="{{ next }}" />
     </form>

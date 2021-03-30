@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 
 {% block head %}
     {% load bootstrap %}
@@ -19,7 +20,7 @@
         <h2 class='form-heading'>Please Register</h2>
         <form role='form' method="post" action="{% url 'register' %}" class='form text-center'>
             {% csrf_token %}
-            {{ form }}
+            {{ form | crispy }}
             <button class="btn btn-lg btn-success btn-block" type="submit">Register</button>
         </form>
     <hr>

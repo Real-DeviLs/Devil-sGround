@@ -3,7 +3,7 @@ from contest.forms import RegistrationForm ,LoginForm
 from question.models import Profile
 from contest.functions import contest_phase
 from django.contrib.auth import logout , authenticate,login
-
+from django.contrib import messages
 
 
 def home(request):
@@ -31,7 +31,12 @@ def register(request):
             else:
                 form = RegistrationForm()
 
-    return render(request, template, {'form':form})
+        return render(request, template, {'form':form})
+    else:
+        messages.warning(request,"No Competition Online Come Back After Some Time")
+        
+        return render(request,"404.html")
+    # return render(request,"403.html")
 
 
 def unauthorized(request):
@@ -40,10 +45,12 @@ def unauthorized(request):
 
 def logout_user(request):
     logout(request)
+    messages.warning(request," bbye  See ya Soon" )
     return render(request,'logged_out.html')
 
 
 def login_user(request):
+    # if request.user.is_authenticated:
     form = LoginForm()
     if request.method == 'POST':
 
@@ -53,14 +60,21 @@ def login_user(request):
         user =  authenticate(username =uname,password=pwd)
         if user is not None:
             login(request,user)
+            messages.warning(request,"Logged In Let's Code")
+            return redirect('home')
+
+
         else:
-            return redirect("home")
+            messages.warning(request,"Invalid Credentials")
+            # return redirect("home")
+            return render(request,'login.html',{'form':form})
 
 
-        return redirect('home')
+
     else:
         form = LoginForm()
 
     
 
     return render(request,'login.html',{'form':form})
+   
